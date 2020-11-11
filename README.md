@@ -2,12 +2,13 @@
 
 ![MIT](https://img.shields.io/github/license/mbg/wai-rate-limit)
 ![CI](https://github.com/mbg/wai-rate-limit/workflows/CI/badge.svg?branch=master)
+[![Hackage](https://img.shields.io/hackage/v/wai-rate-limit)](https://hackage.haskell.org/package/wai-rate-limit)
 
 This repository contains WAI middleware for rate limiting. The main library is `wai-rate-limit` which provides the WAI middleware as well as implementations of different rate limiting strategies. 
 
 To limit dependencies introduced by `wai-rate-limit`, storage backends are split up into their own packages:
 
-- A Redis backend is provided by `wai-rate-limit-redis`. 
+- A Redis backend is provided by `wai-rate-limit-redis` [![Hackage](https://img.shields.io/hackage/v/wai-rate-limit-redis)](https://hackage.haskell.org/package/wai-rate-limit-redis) 
 
 ## Usage
 
