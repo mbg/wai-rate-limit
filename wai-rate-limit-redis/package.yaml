@@ -2,6 +2,7 @@ name:                wai-rate-limit-redis
 version:             0.1.0.0
 github:              "mbg/wai-rate-limit"
 license:             MIT
+license-file:        LICENSE
 author:              "Michael B. Gale"
 maintainer:          "m.gale@warwick.ac.uk"
 copyright:           "Copyright (c) Michael B. Gale"
