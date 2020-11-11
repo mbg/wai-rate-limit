@@ -6,6 +6,7 @@
 --------------------------------------------------------------------------------
 
 module Network.Wai.RateLimit.Redis (
+    RedisBackendError(..),
     redisBackend
 ) where
 
@@ -20,6 +21,7 @@ import Network.Wai.RateLimit.Backend
 
 --------------------------------------------------------------------------------
 
+-- | Represents reasons why requests made to the Redis backend have failed.
 data RedisBackendError
     = RedisBackendReply Reply 
     | RedisBackendTxAborted
