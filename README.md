@@ -55,7 +55,7 @@ middleware conn = rateLimiting strategy
 
 The behaviour described above can be changed by altering the parameters to `fixedWindow` accordingly. In particular, for e.g. REST APIs, you may wish to use e.g. API keys or other user identifiers in place of IP addresses.
 
-## Custom strategies
+### Custom strategies
 
 In addition to the provided strategies, you can implement your own `Strategy` values or customise existing ones. The `Strategy` type is currently defines as follows, so a custom strategy is essentially a function `Request -> IO Bool` which should return `True` if the request should proceed or `False` if it should be rejected:
 
@@ -88,5 +88,5 @@ middleware conn = rateLimiting strategy{ strategyOnRequest = customHandler }
           customHandler req =  
               if rawPathInfo req == "/index.html" 
               then pure True -- always allow access to /index.html
-              else strategyOnRequest strategy
+              else strategyOnRequest strategy req
 ```
