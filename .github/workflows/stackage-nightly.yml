@@ -1,0 +1,28 @@
+name: stackage-nightly
+
+on:
+  schedule:
+    - cron: '5 6 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1  
+    
+    - name: Install system dependencies 
+      run: |
+        sudo apt-get install libpcre3-dev
+
+    - name: Install the Haskell Stack 
+      run: |
+        mkdir -p ~/.local/bin
+        curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+
+    - name: Build with the nightly snapshot
+      run: |
+        rm -f stack.yaml && stack init --resolver nightly
+        docker-compose up -d
+        stack build --resolver nightly --haddock --test --bench --no-run-benchmarks
+        docker-compose down

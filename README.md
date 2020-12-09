@@ -2,6 +2,7 @@
 
 ![MIT](https://img.shields.io/github/license/mbg/wai-rate-limit)
 ![CI](https://github.com/mbg/wai-rate-limit/workflows/CI/badge.svg?branch=master)
+![stackage-nightly](https://github.com/mbg/wai-rate-limit/workflows/stackage-nightly/badge.svg)
 [![Hackage](https://img.shields.io/hackage/v/wai-rate-limit)](https://hackage.haskell.org/package/wai-rate-limit)
 
 This repository contains WAI middleware for rate limiting. The main library is `wai-rate-limit` which provides the WAI middleware as well as implementations of different rate limiting strategies. 
