@@ -5,6 +5,15 @@ on:
       branches: [master]
       tags:
         - 'v*'
+      paths:
+        - '.github/workflows/**'
+        - 'wai-rate-limit/src/**'
+        - 'wai-rate-limit/package.yaml'
+        - 'wai-rate-limit-redis/src/**'
+        - 'wai-rate-limit-redis/test/**'
+        - 'wai-rate-limit-redis/package.yaml'
+        - 'docker-compose.yaml'
+        - 'stack*.yaml'
     pull_request:
       branches: [master]
   
