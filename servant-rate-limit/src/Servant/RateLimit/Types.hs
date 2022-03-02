@@ -27,8 +27,7 @@ module Servant.RateLimit.Types (
 
 import GHC.TypeLits
 
-import Data.ByteString (ByteString)
-import Data.ByteString.Char8 qualified as C8
+import Data.ByteString.Char8 as C8
 import Data.Kind
 import Data.Proxy
 

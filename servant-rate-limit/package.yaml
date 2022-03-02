@@ -18,7 +18,6 @@ default-extensions:
   - DataKinds
   - FlexibleContexts
   - FlexibleInstances
-  - ImportQualifiedPost
   - MultiParamTypeClasses
   - OverloadedStrings
   - RecordWildCards
