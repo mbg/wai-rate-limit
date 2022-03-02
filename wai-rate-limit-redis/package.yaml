@@ -4,7 +4,7 @@ github:              "mbg/wai-rate-limit"
 license:             MIT
 license-file:        LICENSE
 author:              "Michael B. Gale"
-maintainer:          "m.gale@warwick.ac.uk"
+maintainer:          "github@michael-gale.co.uk"
 copyright:           "Copyright (c) Michael B. Gale"
 
 category:            Security
@@ -38,9 +38,9 @@ tests:
         - -rtsopts
         - -with-rtsopts=-N
         dependencies:
-        - wai 
+        - wai
         - wai-extra
-        - wai-rate-limit 
+        - wai-rate-limit
         - wai-rate-limit-redis
         - http-types
         - warp
