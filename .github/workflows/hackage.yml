@@ -28,7 +28,7 @@ jobs:
           echo "save-hackage-creds: false" >> ${{ steps.install-haskell.outputs.stack-root }}/config.yaml
 
       - name: Publish `wai-rate-limit`
-        if: startsWith(github.ref, 'refs/tags/wai-rate-limit-')
+        if: startsWith(github.ref, 'refs/tags/wai-rate-limit-') && !contains(github.ref, 'redis')
         run: stack upload ./wai-rate-limit/
         env:
           HACKAGE_USERNAME: ${{ secrets.HACKAGE_USER }}
