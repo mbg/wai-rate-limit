@@ -13,6 +13,7 @@ description: "A Haskell library which implements rate limiting for Servant"
 
 extra-source-files:
   - README.md
+  - CHANGELOG.md
 
 default-extensions:
   - DataKinds

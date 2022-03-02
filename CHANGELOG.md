@@ -1,6 +1,3 @@
 # Changes
 
-## Unreleased
-
-- Support for fixed and sliding window strategies
-- Redis backend
+See the individual changelogs for [`wai-rate-limit`](./wai-rate-limit/CHANGELOG.md), [`wai-rate-limit-redis`](./wai-rate-limit-redis/CHANGELOG.md), and [`servant-rate-limit`](./servant-rate-limit/CHANGELOG.md).

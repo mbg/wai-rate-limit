@@ -1,29 +1,30 @@
-name:                wai-rate-limit
-version:             0.2.0.0
-github:              "mbg/wai-rate-limit"
-license:             MIT
-license-file:        LICENSE
-author:              "Michael B. Gale"
-maintainer:          "github@michael-gale.co.uk"
-copyright:           "Copyright (c) Michael B. Gale"
+name: wai-rate-limit
+version: 0.2.0.0
+github: "mbg/wai-rate-limit"
+license: MIT
+license-file: LICENSE
+author: "Michael B. Gale"
+maintainer: "github@michael-gale.co.uk"
+copyright: "Copyright (c) Michael B. Gale"
 
-category:            Security
-synopsis:            "Rate limiting as WAI middleware"
-description:         "A Haskell library which implements rate limiting as WAI middleware"
+category: Security
+synopsis: "Rate limiting as WAI middleware"
+description: "A Haskell library which implements rate limiting as WAI middleware"
 
 extra-source-files:
-- README.md
+  - README.md
+  - CHANGELOG.md
 
 default-extensions:
-- OverloadedStrings
-- RecordWildCards
+  - OverloadedStrings
+  - RecordWildCards
 
 dependencies:
-- base >= 4.8 && < 5
-- http-types < 1
-- wai >= 3.0 && < 4
+  - base >= 4.8 && < 5
+  - http-types < 1
+  - wai >= 3.0 && < 4
 
 library:
-    source-dirs: src
-    ghc-options:
+  source-dirs: src
+  ghc-options:
     - -W
