@@ -2,7 +2,8 @@ name: CI
 
 on:
     push:
-      branches: [master]
+      branches:
+        - main
       tags:
         - 'v*'
       paths:
@@ -15,25 +16,24 @@ on:
         - 'docker-compose.yaml'
         - 'stack*.yaml'
     pull_request:
-      branches: [master]
-  
+
 jobs:
     build:
-      strategy: 
+      strategy:
         matrix:
-          resolver: 
+          resolver:
             - stack
-  
+
       runs-on: ubuntu-latest
-  
+
       steps:
-      - uses: actions/checkout@v1  
-      
-      - name: Install system dependencies 
+      - uses: actions/checkout@v1
+
+      - name: Install system dependencies
         run: |
           sudo apt-get install libpcre3-dev
-          
-      - name: Install the Haskell Stack 
+
+      - name: Install the Haskell Stack
         run: |
           mkdir -p ~/.local/bin
           curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
@@ -48,7 +48,7 @@ jobs:
               ${{ runner.os }}-stack
               ${{ runner.os }}
 
-      - name: Install GHC 
+      - name: Install GHC
         run: |
           export PATH=$HOME/.local/bin:$PATH
           stack --stack-yaml=${{ matrix.resolver }}.yaml --no-terminal --install-ghc setup
@@ -57,7 +57,7 @@ jobs:
         run: |
           export PATH=$HOME/.local/bin:$PATH
           stack --stack-yaml=${{ matrix.resolver }}.yaml --no-terminal build --only-dependencies --fast
-          
+
       - name: Build
         id: build
         run: |

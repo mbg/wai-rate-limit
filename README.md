@@ -1,15 +1,15 @@
 # Rate limiting as WAI middleware
 
 ![MIT](https://img.shields.io/github/license/mbg/wai-rate-limit)
-![CI](https://github.com/mbg/wai-rate-limit/workflows/CI/badge.svg?branch=master)
+![CI](https://github.com/mbg/wai-rate-limit/workflows/CI/badge.svg?branch=main)
 ![stackage-nightly](https://github.com/mbg/wai-rate-limit/workflows/stackage-nightly/badge.svg)
 [![Hackage](https://img.shields.io/hackage/v/wai-rate-limit)](https://hackage.haskell.org/package/wai-rate-limit)
 
-This repository contains WAI middleware for rate limiting. The main library is `wai-rate-limit` which provides the WAI middleware as well as implementations of different rate limiting strategies. 
+This repository contains WAI middleware for rate limiting. The main library is `wai-rate-limit` which provides the WAI middleware as well as implementations of different rate limiting strategies.
 
 To limit dependencies introduced by `wai-rate-limit`, storage backends are split up into their own packages:
 
-- A Redis backend is provided by `wai-rate-limit-redis` [![Hackage](https://img.shields.io/hackage/v/wai-rate-limit-redis)](https://hackage.haskell.org/package/wai-rate-limit-redis) 
+- A Redis backend is provided by `wai-rate-limit-redis` [![Hackage](https://img.shields.io/hackage/v/wai-rate-limit-redis)](https://hackage.haskell.org/package/wai-rate-limit-redis)
 
 ## Usage
 
@@ -27,8 +27,8 @@ import Network.Wai.RateLimit.Strategy
 import Network.Wai.RateLimit.Redis
 
 middleware :: Redis.Connection -> Middleware
-middleware conn = rateLimiting strategy 
-    where backend = redisBackend conn 
+middleware conn = rateLimiting strategy
+    where backend = redisBackend conn
           getKey = pure . C8.pack . show . remoteHost
           strategy = slidingWindow backend 29 50 getKey
 ```
@@ -37,7 +37,7 @@ The behaviour described above can be changed by altering the parameters to `slid
 
 ### Fixed Window
 
-The following example demonstrates how to use the middleware with a fixed window strategy and a Redis backend. The resulting middleware will limit requests to 50 requests per window of 29 seconds based on keys derived from the client's IP address. 
+The following example demonstrates how to use the middleware with a fixed window strategy and a Redis backend. The resulting middleware will limit requests to 50 requests per window of 29 seconds based on keys derived from the client's IP address.
 
 ```haskell
 import qualified Data.ByteString.Char8 as C8
@@ -49,8 +49,8 @@ import Network.Wai.RateLimit.Strategy
 import Network.Wai.RateLimit.Redis
 
 middleware :: Redis.Connection -> Middleware
-middleware conn = rateLimiting strategy 
-    where backend = redisBackend conn 
+middleware conn = rateLimiting strategy
+    where backend = redisBackend conn
           getKey = pure . C8.pack . show . remoteHost
           strategy = fixedWindow backend 29 50 getKey
 ```
@@ -83,12 +83,12 @@ import Network.Wai.RateLimit.Strategy
 import Network.Wai.RateLimit.Redis
 
 middleware :: Redis.Connection -> Middleware
-middleware conn = rateLimiting strategy{ strategyOnRequest = customHandler } 
-    where backend = redisBackend conn 
+middleware conn = rateLimiting strategy{ strategyOnRequest = customHandler }
+    where backend = redisBackend conn
           getKey = pure . C8.pack . show . remoteHost
           strategy = fixedWindow backend 29 50 getKey
-          customHandler req =  
-              if rawPathInfo req == "/index.html" 
+          customHandler req =
+              if rawPathInfo req == "/index.html"
               then pure True -- always allow access to /index.html
               else strategyOnRequest strategy req
 ```
