@@ -1,4 +1,5 @@
 resolver: lts-18.27
 packages:
-- ./wai-rate-limit/
-- ./wai-rate-limit-redis/
+  - ./wai-rate-limit/
+  - ./wai-rate-limit-redis/
+  - ./servant-rate-limit/

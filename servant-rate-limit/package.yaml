@@ -1,0 +1,81 @@
+name: servant-rate-limit
+version: 0.1.0.0
+github: "mbg/wai-rate-limit"
+license: MIT
+license-file: LICENSE
+author: "Michael B. Gale"
+maintainer: "github@michael-gale.co.uk"
+copyright: "Copyright (c) Michael B. Gale"
+
+category: Security
+synopsis: "Rate limiting for Servant"
+description: "A Haskell library which implements rate limiting for Servant"
+
+extra-source-files:
+  - README.md
+
+default-extensions:
+  - DataKinds
+  - FlexibleContexts
+  - FlexibleInstances
+  - ImportQualifiedPost
+  - MultiParamTypeClasses
+  - OverloadedStrings
+  - RecordWildCards
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
+
+dependencies:
+  - base >= 4.8 && < 5
+  - bytestring
+  - http-types < 1
+  - servant
+  - wai >= 3.0 && < 4
+  - wai-rate-limit
+
+flags:
+  server:
+    description: Enable servant-server support.
+    manual: true
+    default: true
+  client:
+    description: Enable servant-client support.
+    manual: true
+    default: true
+
+when:
+  - condition: flag(server)
+    dependencies:
+      - servant-server
+  - condition: flag(client)
+    dependencies:
+      - servant-client
+
+library:
+  source-dirs: src
+  ghc-options:
+    - -Wall
+  when:
+    - condition: flag(server)
+      exposed-modules:
+        - Servant.RateLimit.Server
+    - condition: flag(client)
+      exposed-modules:
+        - Servant.RateLimit.Client
+
+tests:
+  servant-rate-limit-tests:
+    source-dirs: test
+    main: Spec.hs
+    dependencies:
+      - hedis
+      - http-client
+      - servant-client
+      - servant-rate-limit
+      - servant-server
+      - tasty
+      - tasty-hunit
+      - wai-extra
+      - wai-rate-limit-redis
+      - warp
