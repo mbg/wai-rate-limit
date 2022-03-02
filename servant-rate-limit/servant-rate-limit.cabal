@@ -59,7 +59,7 @@ library
     , http-types <1
     , servant
     , wai >=3.0 && <4
-    , wai-rate-limit
+    , wai-rate-limit >=0.2 && <1
   if flag(server)
     build-depends:
         servant-server
@@ -105,7 +105,7 @@ test-suite servant-rate-limit-tests
     , tasty-hunit
     , wai >=3.0 && <4
     , wai-extra
-    , wai-rate-limit
+    , wai-rate-limit >=0.2 && <1
     , wai-rate-limit-redis
     , warp
   if flag(server)

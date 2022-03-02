@@ -31,7 +31,7 @@ dependencies:
   - http-types < 1
   - servant
   - wai >= 3.0 && < 4
-  - wai-rate-limit
+  - wai-rate-limit >= 0.2 && < 1
 
 flags:
   server:
