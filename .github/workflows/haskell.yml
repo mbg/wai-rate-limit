@@ -5,7 +5,7 @@ on:
     branches:
       - main
     tags:
-      - "v*"
+      - "*"
     paths:
       - ".github/workflows/**"
       - "wai-rate-limit/src/**"

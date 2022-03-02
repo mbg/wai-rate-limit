@@ -1,0 +1,49 @@
+name: hackage
+
+on:
+  push:
+    tags:
+      - 'wai-rate-limit-*'
+      - 'wai-rate-limit-redis-*'
+      - 'servant-rate-limit-*'
+
+jobs:
+  publish-to-hackage:
+    name: 'Publish to Hackage'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: haskell/actions/setup@v1
+        id: install-haskell
+        with:
+          stack-no-global: true
+          enable-stack: true
+          stack-version: 'latest'
+
+      - name: Configure stack
+        run: |
+          mkdir -p ${{ steps.install-haskell.outputs.stack-root }}
+          echo "save-hackage-creds: false" >> ${{ steps.install-haskell.outputs.stack-root }}/config.yaml
+
+      - name: Publish `wai-rate-limit`
+        if: startsWith(github.ref, 'refs/tags/wai-rate-limit-')
+        run: stack upload ./wai-rate-limit/
+        env:
+          HACKAGE_USERNAME: ${{ secrets.HACKAGE_USER }}
+          HACKAGE_PASSWORD: ${{ secrets.HACKAGE_PASSWORD }}
+
+      - name: Publish `wai-rate-limit-redis`
+        if: startsWith(github.ref, 'refs/tags/wai-rate-limit-redis-')
+        run: stack upload ./wai-rate-limit-redis/
+        env:
+          HACKAGE_USERNAME: ${{ secrets.HACKAGE_USER }}
+          HACKAGE_PASSWORD: ${{ secrets.HACKAGE_PASSWORD }}
+
+      - name: Publish `servant-rate-limit`
+        if: startsWith(github.ref, 'refs/tags/servant-rate-limit-')
+        run: stack upload ./servant-rate-limit/
+        env:
+          HACKAGE_USERNAME: ${{ secrets.HACKAGE_USER }}
+          HACKAGE_PASSWORD: ${{ secrets.HACKAGE_PASSWORD }}
