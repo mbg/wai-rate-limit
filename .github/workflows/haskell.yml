@@ -57,7 +57,7 @@ jobs:
       - name: Build
         id: build
         run: |
-          stack --stack-yaml=${{ matrix.resolver }}.yaml --no-terminal build --fast
+          stack --stack-yaml=${{ matrix.resolver }}.yaml --no-terminal build --fast --test --no-run-tests
 
       - name: Test
         id: test
