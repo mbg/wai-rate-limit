@@ -21,11 +21,10 @@ jobs:
   build:
     strategy:
       matrix:
-        include:
-          - resolver: "stack-lts-16.1"
-            ghc-version: "8.8.3"
-          - resolver: "stack-lts-18"
-            ghc-version: "8.10.7"
+        resolver:
+          - "stack-lts-16.1"
+          - "stack-lts-18"
+          - "stack-lts-19"
 
     runs-on: ubuntu-latest
 
@@ -35,8 +34,9 @@ jobs:
       - uses: haskell/actions/setup@v1
         id: install-haskell
         with:
-          ghc-version: ${{ matrix.ghc-version }}
+          stack-no-global: true
           enable-stack: true
+          stack-setup-ghc: true
           stack-version: "latest"
 
       - name: Cache .stack

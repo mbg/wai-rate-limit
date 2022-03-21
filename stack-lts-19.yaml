@@ -1,0 +1,5 @@
+resolver: lts-19.0
+packages:
+  - ./wai-rate-limit/
+  - ./wai-rate-limit-redis/
+  - ./servant-rate-limit/
