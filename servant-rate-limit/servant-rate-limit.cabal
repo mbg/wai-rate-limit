@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           servant-rate-limit
-version:        0.1.0.0
+version:        0.2.0.0
 synopsis:       Rate limiting for Servant
 description:    A Haskell library which implements rate limiting for Servant
 category:       Security
@@ -62,7 +62,7 @@ library
     , time-units >=1.0 && <2
     , time-units-types >=0.2 && <1
     , wai >=3.0 && <4
-    , wai-rate-limit >=0.2 && <1
+    , wai-rate-limit >=0.3 && <1
   if flag(server)
     build-depends:
         servant-server
@@ -110,7 +110,7 @@ test-suite servant-rate-limit-tests
     , time-units-types >=0.2 && <1
     , wai >=3.0 && <4
     , wai-extra
-    , wai-rate-limit >=0.2 && <1
+    , wai-rate-limit >=0.3 && <1
     , wai-rate-limit-redis
     , warp
   if flag(server)
