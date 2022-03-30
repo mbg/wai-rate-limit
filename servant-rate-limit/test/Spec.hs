@@ -5,7 +5,9 @@
 -- file in the root directory of this source tree.                            --
 --------------------------------------------------------------------------------
 
+import Control.Concurrent
 import Control.Monad
+import Control.Monad.IO.Class
 
 import Database.Redis
 
@@ -22,18 +24,16 @@ import Servant.RateLimit.Server
 
 import Test.Tasty
 import Test.Tasty.HUnit
-import Control.Monad.IO.Class
-import Control.Concurrent
 
 --------------------------------------------------------------------------------
 
 -- | The API we use for out tests, which has endpoints for the different
 -- rate limiting strategies as well as an unrestricted endpoint.
 type TestAPI
-    = RateLimit (FixedWindow 2 50) (IPAddressPolicy "fixed:") :>
+    = RateLimit (FixedWindow ('Second 2) 50) (IPAddressPolicy "fixed:") :>
       "fixed-window" :>
       Get '[JSON] String
- :<|> RateLimit (SlidingWindow 2 50) (IPAddressPolicy "sliding:") :>
+ :<|> RateLimit (SlidingWindow ('Second 2) 50) (IPAddressPolicy "sliding:") :>
       "sliding-window" :>
       Get '[JSON] String
  :<|> "unrestricted" :>

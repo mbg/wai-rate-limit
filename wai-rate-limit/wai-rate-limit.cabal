@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           wai-rate-limit
-version:        0.2.0.0
+version:        0.3.0.0
 synopsis:       Rate limiting as WAI middleware
 description:    A Haskell library which implements rate limiting as WAI middleware
 category:       Security
@@ -41,5 +41,6 @@ library
   build-depends:
       base >=4.8 && <5
     , http-types <1
+    , time-units ==1.*
     , wai >=3.0 && <4
   default-language: Haskell2010

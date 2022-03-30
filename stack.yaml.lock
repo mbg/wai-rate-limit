@@ -3,7 +3,14 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: time-units-types-0.2.0.1@sha256:7ef11236dd3b6433ec9df3341e98bc70c35dbe2341d1a8fc6a0b4255349ce162,1180
+    pantry-tree:
+      size: 281
+      sha256: 15f29c7b813dbce3cecff3604fdb1bdadde4188f24f67a7d8f37ce6213835ed4
+  original:
+    hackage: time-units-types-0.2.0.1@sha256:7ef11236dd3b6433ec9df3341e98bc70c35dbe2341d1a8fc6a0b4255349ce162,1180
 snapshots:
 - completed:
     size: 590102

@@ -1,5 +1,5 @@
 name: wai-rate-limit
-version: 0.2.0.0
+version: 0.3.0.0
 github: "mbg/wai-rate-limit"
 license: MIT
 license-file: LICENSE
@@ -22,6 +22,7 @@ default-extensions:
 dependencies:
   - base >= 4.8 && < 5
   - http-types < 1
+  - time-units >= 1 && < 2
   - wai >= 3.0 && < 4
 
 library:

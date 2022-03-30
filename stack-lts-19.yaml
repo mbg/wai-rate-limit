@@ -3,3 +3,6 @@ packages:
   - ./wai-rate-limit/
   - ./wai-rate-limit-redis/
   - ./servant-rate-limit/
+
+extra-deps:
+  - time-units-types-0.2.0.1@sha256:7ef11236dd3b6433ec9df3341e98bc70c35dbe2341d1a8fc6a0b4255349ce162,1180
