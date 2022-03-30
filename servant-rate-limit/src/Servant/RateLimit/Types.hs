@@ -8,6 +8,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Servant.RateLimit.Types (
     -- * Servant combinator
@@ -20,7 +21,10 @@ module Servant.RateLimit.Types (
 
     -- * Rate-limiting policies
     IPAddressPolicy,
-    HasRateLimitPolicy(..)
+    HasRateLimitPolicy(..),
+
+    -- * Re-exports
+    module Data.Time.TypeLevel
 ) where
 
 --------------------------------------------------------------------------------
@@ -30,6 +34,8 @@ import GHC.TypeLits
 import Data.ByteString.Char8 as C8
 import Data.Kind
 import Data.Proxy
+import qualified Data.Time.Units as Units
+import Data.Time.TypeLevel
 
 import Network.Wai
 import Network.Wai.RateLimit.Backend
@@ -38,11 +44,11 @@ import Network.Wai.RateLimit.Strategy
 --------------------------------------------------------------------------------
 
 -- | A type-level description for the parameters of the `fixedWindow` strategy.
-data FixedWindow (secs :: Nat) (capacity :: Nat)
+data FixedWindow (dur :: TimePeriod) (capacity :: Nat)
 
 -- | A type-level description for the parameters of the `slidingWindow`
 -- strategy.
-data SlidingWindow (secs :: Nat) (capacity :: Nat)
+data SlidingWindow (dur :: TimePeriod) (capacity :: Nat)
 
 -- | A class of types which are type-level descriptions of rate-limiting
 -- strategies.
@@ -52,23 +58,25 @@ class HasRateLimitStrategy strategy where
     -- the client should be identified, returns a rate-limiting `Strategy`.
     strategyValue :: Backend key -> (Request -> IO key) -> Strategy
 
-instance (KnownNat secs, KnownNat capacity)
-    => HasRateLimitStrategy (FixedWindow secs capacity)
+instance
+    (KnownDuration dur, KnownNat capacity, Units.TimeUnit (DurationUnit dur))
+    => HasRateLimitStrategy (FixedWindow dur capacity)
     where
 
     strategyValue backend getKey = fixedWindow
         backend
-        (fromInteger $ natVal (Proxy :: Proxy secs))
+        (Units.convertUnit $ durationVal @dur)
         (fromInteger $ natVal (Proxy :: Proxy capacity))
         getKey
 
-instance (KnownNat secs, KnownNat capacity)
-    => HasRateLimitStrategy (SlidingWindow secs capacity)
+instance
+    (KnownDuration dur, KnownNat capacity, Units.TimeUnit (DurationUnit dur))
+    => HasRateLimitStrategy (SlidingWindow dur capacity)
     where
 
     strategyValue backend getKey = slidingWindow
         backend
-        (fromInteger $ natVal (Proxy :: Proxy secs))
+        (Units.convertUnit $ durationVal @dur)
         (fromInteger $ natVal (Proxy :: Proxy capacity))
         getKey
 
