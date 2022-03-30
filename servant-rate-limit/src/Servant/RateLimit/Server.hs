@@ -17,11 +17,6 @@ module Servant.RateLimit.Server where
 import Control.Monad
 import Control.Monad.IO.Class
 
-import Data.ByteString as BS
-import Data.ByteString.Char8 as C8
-import Data.Kind
-
-import Network.Wai
 import Network.Wai.RateLimit.Backend
 import Network.Wai.RateLimit.Strategy
 
