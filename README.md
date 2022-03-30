@@ -108,14 +108,16 @@ middleware conn = rateLimiting strategy{ strategyOnRequest = customHandler }
 The `Servant.RateLimit` module exports types for describing rate-limiting strategies and policies at the type-level. Consider the following API type specification:
 
 ```haskell
+import Data.Time.TypeLevel
+
 import Servant
 import Servant.RateLimit
 
 type TestAPI
-    = RateLimit (FixedWindow 2 50) (IPAddressPolicy "fixed:") :>
+    = RateLimit (FixedWindow ('Second 2) 50) (IPAddressPolicy "fixed:") :>
       "fixed-window" :>
       Get '[JSON] String
- :<|> RateLimit (SlidingWindow 2 50) (IPAddressPolicy "sliding:") :>
+ :<|> RateLimit (SlidingWindow ('Second 2) 50) (IPAddressPolicy "sliding:") :>
       "sliding-window" :>
       Get '[JSON] String
  :<|> "unrestricted" :>
