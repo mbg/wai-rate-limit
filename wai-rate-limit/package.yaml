@@ -22,6 +22,7 @@ default-extensions:
 dependencies:
   - base >= 4.8 && < 5
   - http-types < 1
+  - time-units >= 1 && < 2
   - wai >= 3.0 && < 4
 
 library:

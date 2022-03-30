@@ -5,6 +5,7 @@
 -- file in the root directory of this source tree.                            --
 --------------------------------------------------------------------------------
 
+-- | Exports functions which implement rate-limiting strategies.
 module Network.Wai.RateLimit.Strategy (
     Strategy(..),
     fixedWindow,
@@ -14,6 +15,8 @@ module Network.Wai.RateLimit.Strategy (
 --------------------------------------------------------------------------------
 
 import Control.Monad
+
+import Data.Time.Units
 
 import Network.Wai
 import Network.Wai.RateLimit.Backend
@@ -28,14 +31,17 @@ newtype Strategy = MkStrategy {
     strategyOnRequest :: Request -> IO Bool
 }
 
--- | 'windowStrategy'
+-- | `windowStrategy` implements a general window-based rate limiting strategy.
 windowStrategy
-    :: Backend key
-    -> Integer
-    -> Integer
-    -> (Request -> IO key)
-    -> (Integer -> Bool)
-    -> Request
+    :: Backend key -- ^ The storage backend to use.
+    -> Second -- ^ The number of seconds after which recorded usage expires.
+    -> Integer -- ^ How much capacity each key should have.
+    -> (Request -> IO key) -- ^ A function which computes a key for the
+                           -- request.
+    -> (Integer -> Bool) -- ^ A predicate which determines whether the expiry
+                         -- timer should be reset.
+    -> Request -- ^ The request to apply the stragey to, used for deriving
+               -- the key.
     -> IO Bool
 windowStrategy MkBackend{..} seconds capacity getKey cond req = do
     -- get a key to identify the usage bucket for the request: this is
@@ -50,7 +56,7 @@ windowStrategy MkBackend{..} seconds capacity getKey cond req = do
     -- acceptable limit and, if so, add to the expiry timer
     if used <= capacity
     then do
-        when (cond used) $ void $ backendExpireIn key seconds
+        when (cond used) $ void $ backendExpireIn key (toInteger seconds)
         pure True
     else pure False
 
@@ -58,7 +64,7 @@ windowStrategy MkBackend{..} seconds capacity getKey cond req = do
 -- of requests made by a client to @limit@ within a window of @seconds@.
 fixedWindow
     :: Backend key
-    -> Integer
+    -> Second
     -> Integer
     -> (Request -> IO key)
     -> Strategy
@@ -76,7 +82,7 @@ fixedWindow backend seconds capacity getKey = MkStrategy{
 -- been exceeded.
 slidingWindow
     :: Backend key
-    -> Integer
+    -> Second
     -> Integer
     -> (Request -> IO key)
     -> Strategy
