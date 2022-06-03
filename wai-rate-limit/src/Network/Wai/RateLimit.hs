@@ -7,19 +7,16 @@
 
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
--- | Implements WAI 'Middleware' for rate limiting. 
+-- | Implements WAI 'Middleware' for rate limiting.
 module Network.Wai.RateLimit (
     rateLimiting
-) where 
+) where
 
 --------------------------------------------------------------------------------
-
-import Control.Monad
 
 import Network.HTTP.Types
 import Network.Wai
 import Network.Wai.RateLimit.Strategy
-import Network.Wai.RateLimit.Backend
 
 --------------------------------------------------------------------------------
 
@@ -27,13 +24,13 @@ import Network.Wai.RateLimit.Backend
 -- according to the configuration represented by @strategy@.
 rateLimiting :: Strategy -> Middleware
 rateLimiting MkStrategy{..} app req sendResponse = do
-    -- check that the client has not exceeded 
+    -- check that the client has not exceeded
     allowRequest <- strategyOnRequest req
 
     if allowRequest
     -- if not: process the request normally
     then app req sendResponse
     -- otherwise: return a 429 response with an appropriate message
-    else sendResponse $ responseLBS status429 [] "Rate limit exceeded" 
+    else sendResponse $ responseLBS status429 [] "Rate limit exceeded"
 
 --------------------------------------------------------------------------------
