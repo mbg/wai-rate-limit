@@ -119,4 +119,8 @@ test-suite servant-rate-limit-tests
   if flag(client)
     build-depends:
         servant-client
+  if flag(server) && flag(client)
+    buildable: True
+  else
+    buildable: False
   default-language: Haskell2010
