@@ -10,11 +10,12 @@
 | `wai-rate-limit-redis` | [![Hackage](https://img.shields.io/hackage/v/wai-rate-limit-redis)](https://hackage.haskell.org/package/wai-rate-limit-redis) |
 | `servant-rate-limit` | [![Hackage](https://img.shields.io/hackage/v/servant-rate-limit)](https://hackage.haskell.org/package/servant-rate-limit) |
 
-This repository contains WAI middleware for rate limiting as well as a library which provides Servant combinators for including rate limiting strategies in API type specifications. The main library is `wai-rate-limit` which provides the WAI middleware as well as implementations of different rate limiting strategies. For use with Servant, the `servant-rate-limit` library provides the required combinators as well as type class instances.
+This repository contains WAI middleware for rate limiting as well as a library which provides Servant combinators for including rate limiting strategies in API type specifications. The main library is [`wai-rate-limit`](https://hackage.haskell.org/package/wai-rate-limit) which provides the WAI middleware as well as implementations of different rate limiting strategies. For use with Servant, the [`servant-rate-limit`](https://hackage.haskell.org/package/servant-rate-limit) library provides the required combinators as well as type class instances.
 
-To limit dependencies introduced by `wai-rate-limit`, storage backends are split up into their own packages:
+To limit dependencies introduced by [`wai-rate-limit`](https://hackage.haskell.org/package/wai-rate-limit), storage backends are split up into their own packages:
 
-- A Redis backend is provided by `wai-rate-limit-redis`
+- A Redis backend is provided by [`wai-rate-limit-redis`](https://hackage.haskell.org/package/wai-rate-limit-redis)
+- A PostgreSQL backend is provided by [`wai-rate-limit-postgres`](https://hackage.haskell.org/package/wai-rate-limit-postgres)
 
 To limit dependencies for `servant-rate-limit`, build flags control the inclusion of different Servant dependencies and modules. All flags are on by default, but can be toggled off:
 
