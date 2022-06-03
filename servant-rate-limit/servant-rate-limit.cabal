@@ -30,6 +30,11 @@ flag client
   manual: True
   default: True
 
+flag openapi
+  description: Enable servant-openapi3 support.
+  manual: True
+  default: False
+
 flag server
   description: Enable servant-server support.
   manual: True
@@ -69,12 +74,19 @@ library
   if flag(client)
     build-depends:
         servant-client
+  if flag(openapi)
+    build-depends:
+        openapi3
+      , servant-openapi3
   if flag(server)
     exposed-modules:
         Servant.RateLimit.Server
   if flag(client)
     exposed-modules:
         Servant.RateLimit.Client
+  if flag(openapi)
+    exposed-modules:
+        Servant.RateLimit.OpenApi
   default-language: Haskell2010
 
 test-suite servant-rate-limit-tests
@@ -121,7 +133,8 @@ test-suite servant-rate-limit-tests
         servant-client
   if flag(openapi)
     build-depends:
-        servant-openapi3
+        openapi3
+      , servant-openapi3
   if flag(server) && flag(client)
     buildable: True
   else
