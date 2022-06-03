@@ -30,7 +30,7 @@ import Servant.Server.Internal.DelayedIO
 instance
     ( HasServer api ctx
     , HasContextEntry ctx (Backend key)
-    , HasRateLimitStrategy strategy
+    , HasRateLimitStrategy ctx strategy
     , HasRateLimitPolicy ctx policy
     , key ~ RateLimitPolicyKey ctx policy
     ) => HasServer (RateLimit strategy policy :> api) ctx
@@ -49,7 +49,7 @@ instance
         let policy = policyGetIdentifier @ctx @policy context
 
         -- retrieve the rate-limiting strategy used to limit access
-        let strategy = strategyValue @strategy @key backend policy
+        let strategy = strategyValue @ctx @strategy @key context backend policy
 
         let rateCheck = withRequest $ \req -> do
                 -- apply the rate-limiting strategy to the request

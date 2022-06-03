@@ -54,18 +54,19 @@ data SlidingWindow (dur :: TimePeriod) (capacity :: Nat)
 
 -- | A class of types which are type-level descriptions of rate-limiting
 -- strategies.
-class HasRateLimitStrategy strategy where
-    -- | `strategyValue` @backend getKey@ is a function which, given a
+class HasRateLimitStrategy (ctx :: [*]) strategy where
+    -- | `strategyValue` @context backend getKey@ is a function which, given a
     -- @backend@ and a function @getKey@ used to compute the key using which
     -- the client should be identified, returns a rate-limiting `Strategy`.
-    strategyValue :: Backend key -> (Request -> IO key) -> Strategy
+    strategyValue ::
+        Context ctx -> Backend key -> (Request -> IO key) -> Strategy
 
 instance
     (KnownDuration dur, KnownNat capacity, Units.TimeUnit (DurationUnit dur))
-    => HasRateLimitStrategy (FixedWindow dur capacity)
+    => HasRateLimitStrategy ctx (FixedWindow dur capacity)
     where
 
-    strategyValue backend getKey = fixedWindow
+    strategyValue _ backend getKey = fixedWindow
         backend
         (Units.convertUnit $ durationVal @dur)
         (fromInteger $ natVal (Proxy :: Proxy capacity))
@@ -73,10 +74,10 @@ instance
 
 instance
     (KnownDuration dur, KnownNat capacity, Units.TimeUnit (DurationUnit dur))
-    => HasRateLimitStrategy (SlidingWindow dur capacity)
+    => HasRateLimitStrategy ctx (SlidingWindow dur capacity)
     where
 
-    strategyValue backend getKey = slidingWindow
+    strategyValue _ backend getKey = slidingWindow
         backend
         (Units.convertUnit $ durationVal @dur)
         (fromInteger $ natVal (Proxy :: Proxy capacity))
