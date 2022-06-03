@@ -12,7 +12,9 @@ module Servant.RateLimit.Client where
 
 --------------------------------------------------------------------------------
 
-import Servant
+import Data.Proxy
+
+import Servant.API
 import Servant.Client
 import Servant.RateLimit.Types
 
