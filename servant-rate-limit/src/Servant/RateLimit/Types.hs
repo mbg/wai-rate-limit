@@ -5,11 +5,6 @@
 -- file in the root directory of this source tree.                            --
 --------------------------------------------------------------------------------
 
-{-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE UndecidableInstances #-}
-
 module Servant.RateLimit.Types (
     -- * Servant combinator
     RateLimit,
@@ -17,11 +12,9 @@ module Servant.RateLimit.Types (
     -- * Rate-limiting strategies
     FixedWindow,
     SlidingWindow,
-    HasRateLimitStrategy(..),
 
     -- * Rate-limiting policies
     IPAddressPolicy,
-    HasRateLimitPolicy(..),
 
     -- * Re-exports
     module Data.Time.TypeLevel
@@ -31,17 +24,7 @@ module Servant.RateLimit.Types (
 
 import GHC.TypeLits
 
-import Data.ByteString.Char8 as C8
-import Data.Kind
-import Data.Proxy
-import qualified Data.Time.Units as Units
 import Data.Time.TypeLevel
-
-import Network.Wai
-import Network.Wai.RateLimit.Backend
-import Network.Wai.RateLimit.Strategy
-
-import Servant (Context)
 
 --------------------------------------------------------------------------------
 
@@ -51,37 +34,6 @@ data FixedWindow (dur :: TimePeriod) (capacity :: Nat)
 -- | A type-level description for the parameters of the `slidingWindow`
 -- strategy.
 data SlidingWindow (dur :: TimePeriod) (capacity :: Nat)
-
--- | A class of types which are type-level descriptions of rate-limiting
--- strategies.
-class HasRateLimitStrategy (ctx :: [*]) strategy where
-    -- | `strategyValue` @context backend getKey@ is a function which, given a
-    -- @backend@ and a function @getKey@ used to compute the key using which
-    -- the client should be identified, returns a rate-limiting `Strategy`.
-    strategyValue ::
-        Context ctx -> Backend key -> (Request -> IO key) -> Strategy
-
-instance
-    (KnownDuration dur, KnownNat capacity, Units.TimeUnit (DurationUnit dur))
-    => HasRateLimitStrategy ctx (FixedWindow dur capacity)
-    where
-
-    strategyValue _ backend getKey = fixedWindow
-        backend
-        (Units.convertUnit $ durationVal @dur)
-        (fromInteger $ natVal (Proxy :: Proxy capacity))
-        getKey
-
-instance
-    (KnownDuration dur, KnownNat capacity, Units.TimeUnit (DurationUnit dur))
-    => HasRateLimitStrategy ctx (SlidingWindow dur capacity)
-    where
-
-    strategyValue _ backend getKey = slidingWindow
-        backend
-        (Units.convertUnit $ durationVal @dur)
-        (fromInteger $ natVal (Proxy :: Proxy capacity))
-        getKey
 
 --------------------------------------------------------------------------------
 
@@ -93,27 +45,6 @@ instance
 -- but can be set to other values to have different rate limits for different
 -- sets of endpoints.
 data IPAddressPolicy (prefix :: Symbol)
-
--- | A class of types which are type-level descriptions of rate-limiting
--- policies.
-class HasRateLimitPolicy (ctx :: [*]) policy where
-    type RateLimitPolicyKey ctx policy :: Type
-
-    -- | `policyGetIdentifier` @context request@ computes the key that should
-    -- be used by the backend to identify the client to which the rate
-    -- limiting policy should be applied to. This could be as simple
-    -- as retrieving the IP address of the client from @request@
-    -- (as is the case with `IPAddressPolicy`) or retrieving data from
-    -- the @request@ vault. The computation runs in `IO` to allow policies
-    -- to perform arbitrary effects.
-    policyGetIdentifier :: Context ctx -> Request -> IO (RateLimitPolicyKey ctx policy)
-
-instance KnownSymbol prefix => HasRateLimitPolicy ctx (IPAddressPolicy prefix) where
-    type RateLimitPolicyKey ctx (IPAddressPolicy prefix) = ByteString
-
-    policyGetIdentifier _ =
-        pure . (C8.pack (symbolVal (Proxy :: Proxy prefix)) <>) .
-        C8.pack . show . remoteHost
 
 --------------------------------------------------------------------------------
 
