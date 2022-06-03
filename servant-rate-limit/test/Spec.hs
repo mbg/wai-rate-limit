@@ -5,9 +5,13 @@
 -- file in the root directory of this source tree.                            --
 --------------------------------------------------------------------------------
 
+{-# LANGUAGE UndecidableInstances #-}
+
 import Control.Concurrent
 import Control.Monad
 import Control.Monad.IO.Class
+
+import Data.ByteString (ByteString)
 
 import Database.Redis
 
@@ -27,6 +31,17 @@ import Test.Tasty.HUnit
 
 --------------------------------------------------------------------------------
 
+newtype ApiKey = MkApiKey { getApiKey :: ByteString }
+
+data ApiKeyPolicy
+
+instance HasContextEntry ctx ApiKey => HasRateLimitPolicy ctx ApiKeyPolicy where
+    type RateLimitPolicyKey ctx ApiKeyPolicy = ByteString
+
+    policyGetIdentifier ctx req = pure $ getApiKey $ getContextEntry ctx
+
+--------------------------------------------------------------------------------
+
 -- | The API we use for out tests, which has endpoints for the different
 -- rate limiting strategies as well as an unrestricted endpoint.
 type TestAPI
@@ -35,6 +50,9 @@ type TestAPI
       Get '[JSON] String
  :<|> RateLimit (SlidingWindow ('Second 2) 50) (IPAddressPolicy "sliding:") :>
       "sliding-window" :>
+      Get '[JSON] String
+ :<|> RateLimit (FixedWindow ('Second 2) 50) ApiKeyPolicy :>
+      "fixed-window-api-key" :>
       Get '[JSON] String
  :<|> "unrestricted" :>
       Get '[JSON] String
@@ -48,12 +66,17 @@ server :: Server TestAPI
 server =
     pure "Fixed window" :<|>
     pure "Sliding window" :<|>
+    pure "Fixed window (API key)" :<|>
     pure "Unrestricted"
 
 getFixedWindow :: ClientM String
 getSlidingWindow :: ClientM String
+getFixedWindowApiKey :: ClientM String
 getUnrestricted :: ClientM String
-getFixedWindow :<|> getSlidingWindow :<|> getUnrestricted = client testApi
+getFixedWindow :<|>
+    getSlidingWindow :<|>
+    getFixedWindowApiKey :<|>
+    getUnrestricted = client testApi
 
 --------------------------------------------------------------------------------
 
@@ -93,8 +116,6 @@ rateLimitedSession endpoint env = do
     res <- runClientM endpoint env
     assertFailed res
 
-    pure ()
-
 expirySession :: ClientM a -> ClientEnv -> Assertion
 expirySession endpoint env = do
     -- make 50 requests
@@ -119,6 +140,8 @@ tests app = testGroup "Servant.RateLimiting"
         rateLimitedSession getSlidingWindow
     , appTestCase app "Sliding window: rate limit resets" $
         expirySession getSlidingWindow
+    , appTestCase app "Fixed window (API key): gets rate limited" $
+        rateLimitedSession getFixedWindowApiKey
     ]
 
 -- | `main` is the main entry point for the test suite in which we initialise
@@ -130,7 +153,9 @@ main = do
 
     -- stick the Redis backend into the Servant context so that we can access
     -- it when we try to apply rate limiting policies
-    let ctx = backend :. EmptyContext
+    -- also include an arbitrary API key for the custom rate limiting policy
+    -- tests
+    let ctx = backend :. MkApiKey "X-API-Test" :. EmptyContext
 
     -- construct the Servant application using the context
     let app = serveWithContext testApi ctx server

@@ -41,6 +41,8 @@ import Network.Wai
 import Network.Wai.RateLimit.Backend
 import Network.Wai.RateLimit.Strategy
 
+import Servant (Context)
+
 --------------------------------------------------------------------------------
 
 -- | A type-level description for the parameters of the `fixedWindow` strategy.
@@ -93,22 +95,22 @@ data IPAddressPolicy (prefix :: Symbol)
 
 -- | A class of types which are type-level descriptions of rate-limiting
 -- policies.
-class HasRateLimitPolicy policy where
-    type RateLimitPolicyKey policy :: Type
+class HasRateLimitPolicy (ctx :: [*]) policy where
+    type RateLimitPolicyKey ctx policy :: Type
 
-    -- | `policyGetIdentifier` @request@ computes the key that should be
-    -- used by the backend to identify the client to which the rate
+    -- | `policyGetIdentifier` @context request@ computes the key that should
+    -- be used by the backend to identify the client to which the rate
     -- limiting policy should be applied to. This could be as simple
     -- as retrieving the IP address of the client from @request@
     -- (as is the case with `IPAddressPolicy`) or retrieving data from
     -- the @request@ vault. The computation runs in `IO` to allow policies
     -- to perform arbitrary effects.
-    policyGetIdentifier :: Request -> IO (RateLimitPolicyKey policy)
+    policyGetIdentifier :: Context ctx -> Request -> IO (RateLimitPolicyKey ctx policy)
 
-instance KnownSymbol prefix => HasRateLimitPolicy (IPAddressPolicy prefix) where
-    type RateLimitPolicyKey (IPAddressPolicy prefix) = ByteString
+instance KnownSymbol prefix => HasRateLimitPolicy ctx (IPAddressPolicy prefix) where
+    type RateLimitPolicyKey ctx (IPAddressPolicy prefix) = ByteString
 
-    policyGetIdentifier =
+    policyGetIdentifier _ =
         pure . (C8.pack (symbolVal (Proxy :: Proxy prefix)) <>) .
         C8.pack . show . remoteHost
 

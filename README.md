@@ -144,11 +144,24 @@ userKey = unsafePerformIO newKey
 
 data MyPolicy
 
-instance HasRateLimitPolicy MyPolicy where
-    type RateLimitPolicyKey MyPolicy = ByteString
+instance HasRateLimitPolicy ctx MyPolicy where
+    type RateLimitPolicyKey ctx MyPolicy = ByteString
 
-    policyGetIdentifier req =
+    policyGetIdentifier _ req =
         fromMaybe (error "expected to have a user id in the vault") $
         V.lookup userKey (vault req)
+```
 
+Rate limiting policies have access to the Servant context. For example, assuming that a value of a custom `ApiKey` type is stored in the context, we can retrieve it in a custom `HasRateLimitPolicy` as follows:
+
+```haskell
+newtype ApiKey = MkApiKey { getApiKey :: ByteString }
+
+data ApiKeyPolicy
+
+instance HasContextEntry ctx ApiKey => HasRateLimitPolicy ctx ApiKeyPolicy where
+    type RateLimitPolicyKey ctx ApiKeyPolicy = ByteString
+
+    policyGetIdentifier ctx _ =
+        pure $ getApiKey $ getContextEntry ctx
 ```

@@ -31,8 +31,8 @@ instance
     ( HasServer api ctx
     , HasContextEntry ctx (Backend key)
     , HasRateLimitStrategy strategy
-    , HasRateLimitPolicy policy
-    , key ~ RateLimitPolicyKey policy
+    , HasRateLimitPolicy ctx policy
+    , key ~ RateLimitPolicyKey ctx policy
     ) => HasServer (RateLimit strategy policy :> api) ctx
     where
 
@@ -46,7 +46,7 @@ instance
         let backend = getContextEntry context
 
         -- retrieve the rate-limiting policy used to identify clients
-        let policy = policyGetIdentifier @policy
+        let policy = policyGetIdentifier @ctx @policy context
 
         -- retrieve the rate-limiting strategy used to limit access
         let strategy = strategyValue @strategy @key backend policy
