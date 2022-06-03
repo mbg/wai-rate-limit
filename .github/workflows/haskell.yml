@@ -8,6 +8,9 @@ on:
       - "*"
     paths:
       - ".github/workflows/**"
+      - "servant-rate-limit/src/**"
+      - "servant-rate-limit/test/**"
+      - "servant-rate-limit/package.yaml"
       - "wai-rate-limit/src/**"
       - "wai-rate-limit/package.yaml"
       - "wai-rate-limit-redis/src/**"
