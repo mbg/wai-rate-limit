@@ -29,6 +29,12 @@ jobs:
           - "stack-lts-16.1"
           - "stack-lts-18"
           - "stack-lts-19"
+        servant-server-flag: # on by default
+          - ""
+          - "--flag servant-rate-limit:-server"
+        servant-client-flag: # on by default
+          - ""
+          - "--flag servant-rate-limit:-client"
 
     runs-on: ubuntu-latest
 
@@ -43,28 +49,44 @@ jobs:
           stack-setup-ghc: true
           stack-version: "latest"
 
+      - name: Write flags to file (for hashing)
+        run: |
+          echo ${{ matrix.servant-server-flag }} >> .cabal-flags
+          echo ${{ matrix.servant-client-flag }} >> .cabal-flags
+          cat .cabal-flags
+
       - name: Cache .stack
         id: cache-stack
         uses: actions/cache@v3
         with:
           path: ${{ steps.install-haskell.outputs.stack-root }}
-          key: ${{ runner.os }}-${{ matrix.resolver }}-${{ hashFiles(format('{0}.yaml', matrix.resolver)) }}-${{ hashFiles('**/*.cabal') }}
+          key: ${{ runner.os }}-${{ matrix.resolver }}-${{ hashFiles(format('{0}.yaml', matrix.resolver)) }}-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('.cabal-flags') }}
           restore-keys: |
+            ${{ runner.os }}-${{ matrix.resolver }}-${{ hashFiles(format('{0}.yaml', matrix.resolver)) }}-${{ hashFiles('**/*.cabal') }}-
             ${{ runner.os }}-${{ matrix.resolver }}-${{ hashFiles(format('{0}.yaml', matrix.resolver)) }}-
             ${{ runner.os }}-${{ matrix.resolver }}-
 
       - name: Install dependencies
         run: |
-          stack --stack-yaml=${{ matrix.resolver }}.yaml --no-terminal build --only-dependencies --fast
+          stack --stack-yaml=${{ matrix.resolver }}.yaml --no-terminal build \
+            ${{ matrix.servant-server-flag }} \
+            ${{ matrix.servant-client-flag }} \
+            --only-dependencies --fast
 
       - name: Build
         id: build
         run: |
-          stack --stack-yaml=${{ matrix.resolver }}.yaml --no-terminal build --fast --test --no-run-tests
+          stack --stack-yaml=${{ matrix.resolver }}.yaml --no-terminal build \
+            ${{ matrix.servant-server-flag }} \
+            ${{ matrix.servant-client-flag }} \
+            --fast --test --no-run-tests
 
       - name: Test
         id: test
         run: |
           docker-compose up -d
-          stack --stack-yaml=${{ matrix.resolver }}.yaml --no-terminal test --fast
+          stack --stack-yaml=${{ matrix.resolver }}.yaml --no-terminal test \
+            ${{ matrix.servant-server-flag }} \
+            ${{ matrix.servant-client-flag }} \
+            --fast
           docker-compose down
