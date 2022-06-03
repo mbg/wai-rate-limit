@@ -119,6 +119,9 @@ test-suite servant-rate-limit-tests
   if flag(client)
     build-depends:
         servant-client
+  if flag(openapi)
+    build-depends:
+        servant-openapi3
   if flag(server) && flag(client)
     buildable: True
   else
