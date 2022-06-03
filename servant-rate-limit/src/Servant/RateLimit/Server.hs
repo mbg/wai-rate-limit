@@ -41,7 +41,7 @@ import Servant.Server.Internal.DelayedIO
 
 -- | A class of types which are type-level descriptions of rate-limiting
 -- strategies.
-class HasRateLimitStrategy (ctx :: [*]) strategy where
+class HasRateLimitStrategy (ctx :: [Type]) strategy where
     -- | `strategyValue` @context backend getKey@ is a function which, given a
     -- @backend@ and a function @getKey@ used to compute the key using which
     -- the client should be identified, returns a rate-limiting `Strategy`.
@@ -72,7 +72,7 @@ instance
 
 -- | A class of types which are type-level descriptions of rate-limiting
 -- policies.
-class HasRateLimitPolicy (ctx :: [*]) policy where
+class HasRateLimitPolicy (ctx :: [Type]) policy where
     type RateLimitPolicyKey ctx policy :: Type
 
     -- | `policyGetIdentifier` @context request@ computes the key that should
