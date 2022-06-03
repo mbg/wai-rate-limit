@@ -81,3 +81,9 @@ tests:
       - wai-extra
       - wai-rate-limit-redis
       - warp
+    when:
+      condition: flag(server) && flag(client)
+      then:
+        buildable: true
+      else:
+        buildable: false
