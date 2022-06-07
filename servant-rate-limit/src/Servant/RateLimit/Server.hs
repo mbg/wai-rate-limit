@@ -41,7 +41,7 @@ import Servant.Server.Internal.DelayedIO
 
 -- | A class of types which are type-level descriptions of rate-limiting
 -- strategies.
-class HasRateLimitStrategy (ctx :: [Type]) strategy where
+class HasRateLimitStrategy (ctx :: [Type]) strategy key where
     -- | `strategyValue` @context backend getKey@ is a function which, given a
     -- @backend@ and a function @getKey@ used to compute the key using which
     -- the client should be identified, returns a rate-limiting `Strategy`.
@@ -50,7 +50,7 @@ class HasRateLimitStrategy (ctx :: [Type]) strategy where
 
 instance
     (KnownDuration dur, KnownNat capacity, Units.TimeUnit (DurationUnit dur))
-    => HasRateLimitStrategy ctx (FixedWindow dur capacity)
+    => HasRateLimitStrategy ctx (FixedWindow dur capacity) key
     where
 
     strategyValue _ backend getKey = fixedWindow
@@ -61,7 +61,7 @@ instance
 
 instance
     (KnownDuration dur, KnownNat capacity, Units.TimeUnit (DurationUnit dur))
-    => HasRateLimitStrategy ctx (SlidingWindow dur capacity)
+    => HasRateLimitStrategy ctx (SlidingWindow dur capacity) key
     where
 
     strategyValue _ backend getKey = slidingWindow
@@ -94,7 +94,7 @@ instance KnownSymbol prefix => HasRateLimitPolicy ctx (IPAddressPolicy prefix) w
 instance
     ( HasServer api ctx
     , HasContextEntry ctx (Backend key)
-    , HasRateLimitStrategy ctx strategy
+    , HasRateLimitStrategy ctx strategy key
     , HasRateLimitPolicy ctx policy
     , key ~ RateLimitPolicyKey ctx policy
     ) => HasServer (RateLimit strategy policy :> api) ctx
