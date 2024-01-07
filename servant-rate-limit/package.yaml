@@ -45,6 +45,10 @@ flags:
     description: Enable servant-client support.
     manual: true
     default: true
+  openapi:
+    description: Enable servant-openapi3 support.
+    manual: true
+    default: false
 
 when:
   - condition: flag(server)
@@ -53,6 +57,10 @@ when:
   - condition: flag(client)
     dependencies:
       - servant-client
+  - condition: flag(openapi)
+    dependencies:
+      - openapi3
+      - servant-openapi3
 
 library:
   source-dirs: src
@@ -65,6 +73,9 @@ library:
     - condition: flag(client)
       exposed-modules:
         - Servant.RateLimit.Client
+    - condition: flag(openapi)
+      exposed-modules:
+        - Servant.RateLimit.OpenApi
 
 tests:
   servant-rate-limit-tests:
