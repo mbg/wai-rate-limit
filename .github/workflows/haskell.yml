@@ -35,6 +35,9 @@ jobs:
         servant-client-flag: # on by default
           - ""
           - "--flag servant-rate-limit:-client"
+        servant-openapi-flag: # off by default
+          - ""
+          - "--flag servant-rate-limit:openapi"
 
     runs-on: ubuntu-latest
 
