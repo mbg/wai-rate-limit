@@ -28,6 +28,6 @@ jobs:
       - name: Build with the nightly snapshot
         run: |
           rm -f stack.yaml && stack init --resolver nightly
-          docker-compose up -d
+          docker compose up -d
           stack build --resolver nightly --haddock --test --bench --no-run-benchmarks
-          docker-compose down
+          docker compose down
