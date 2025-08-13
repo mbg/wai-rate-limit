@@ -84,9 +84,9 @@ jobs:
       - name: Test
         id: test
         run: |
-          docker-compose up -d
+          docker compose up -d
           stack --stack-yaml=${{ matrix.resolver }}.yaml --no-terminal test \
             ${{ matrix.servant-server-flag }} \
             ${{ matrix.servant-client-flag }} \
             --fast
-          docker-compose down
+          docker compose down
