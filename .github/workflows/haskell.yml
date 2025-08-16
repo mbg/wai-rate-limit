@@ -26,9 +26,8 @@ jobs:
       fail-fast: false
       matrix:
         resolver:
-          - "stack-lts-16.1"
-          - "stack-lts-18"
-          - "stack-lts-19"
+          - "stack-lts16"
+          - "stack"
         servant-server-flag: # on by default
           - ""
           - "--flag servant-rate-limit:-server"
@@ -48,6 +47,11 @@ jobs:
           enable-stack: true
           stack-setup-ghc: true
           stack-version: "latest"
+
+      - name: "Initialise stack.yaml for latest resolver"
+        if: matrix.resolver == 'stack'
+        shell: bash
+        run: stack init --resolver=lts-24
 
       - name: Write flags to file (for hashing)
         run: |

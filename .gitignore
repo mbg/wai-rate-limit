@@ -21,3 +21,10 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
+
+# macOS junk
+.DS_Store
+
+# Ignore the latest Stack resolver configuration
+stack.yaml
+stack.yaml.lock
