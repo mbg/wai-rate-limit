@@ -15,12 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: haskell/actions/setup@v2
+      - name: "Install Stack"
+        uses: haskell-actions/setup@v2
         id: install-haskell
         with:
           stack-no-global: true
           enable-stack: true
-          stack-version: 'latest'
+          stack-version: "latest"
 
       - name: Configure stack
         run: |
