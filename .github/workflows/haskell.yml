@@ -12,6 +12,8 @@ on:
 
 jobs:
   build:
+    name: "Build & Test"
+
     strategy:
       fail-fast: false
       matrix:
@@ -28,7 +30,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - name: "Checkout Repository"
+        uses: actions/checkout@v5
 
       - name: "Install Stack"
         uses: haskell-actions/setup@v2
