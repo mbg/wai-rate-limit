@@ -1,4 +1,4 @@
-name: stackage-nightly
+name: "Stackage Nightly"
 
 on:
   workflow_dispatch:
@@ -9,25 +9,32 @@ on:
       - main
     paths:
       - ".github/workflows/stackage-nightly.yml"
+  pull_request:
+
+concurrency:
+  group: nightly-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
+    name: "Build"
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v5
+    permissions:
+      contents: read
+      issues: write
 
-      - uses: haskell/actions/setup@v2
-        id: install-haskell
-        with:
-          enable-stack: true
-          stack-version: "latest"
-          stack-no-global: true
-          stack-setup-ghc: true
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v5
+
+      - name: Start containers
+        shell: bash
+        run: docker compose up -d
 
       - name: Build with the nightly snapshot
-        run: |
-          rm -f stack.yaml && stack init --resolver nightly
-          docker compose up -d
-          stack build --resolver nightly --haddock --test --bench --no-run-benchmarks
-          docker compose down
+        uses: mbg/actions/stack/nightly@v0.3
+
+      - name: Stop containers
+        shell: bash
+        run: docker compose down

@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -63,6 +63,7 @@ library
     , time-units-types >=0.2 && <1
     , wai >=3.0 && <4
     , wai-rate-limit >=0.3 && <1
+  default-language: Haskell2010
   if flag(server)
     build-depends:
         servant-server
@@ -75,7 +76,6 @@ library
   if flag(client)
     exposed-modules:
         Servant.RateLimit.Client
-  default-language: Haskell2010
 
 test-suite servant-rate-limit-tests
   type: exitcode-stdio-1.0
@@ -113,6 +113,7 @@ test-suite servant-rate-limit-tests
     , wai-rate-limit >=0.3 && <1
     , wai-rate-limit-redis
     , warp
+  default-language: Haskell2010
   if flag(server)
     build-depends:
         servant-server
@@ -123,4 +124,3 @@ test-suite servant-rate-limit-tests
     buildable: True
   else
     buildable: False
-  default-language: Haskell2010

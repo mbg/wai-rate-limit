@@ -1,34 +1,29 @@
-name: CI
+name: Haskell
 
 on:
   push:
     branches:
       - main
-    tags:
-      - "*"
-    paths:
-      - ".github/workflows/**"
-      - "servant-rate-limit/src/**"
-      - "servant-rate-limit/test/**"
-      - "servant-rate-limit/package.yaml"
-      - "wai-rate-limit/src/**"
-      - "wai-rate-limit/package.yaml"
-      - "wai-rate-limit-redis/src/**"
-      - "wai-rate-limit-redis/test/**"
-      - "wai-rate-limit-redis/package.yaml"
-      - "docker-compose.yaml"
-      - "stack*.yaml"
+    paths-ignore:
+      - ".github/dependabot.yml"
+      - "*.md"
+      - "LICENSE"
   pull_request:
+
+concurrency:
+  group: haskell-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
+    name: "Build & Test"
+
     strategy:
       fail-fast: false
       matrix:
         resolver:
-          - "stack-lts-16.1"
-          - "stack-lts-18"
-          - "stack-lts-19"
+          - "stack-lts16"
+          - "stack"
         servant-server-flag: # on by default
           - ""
           - "--flag servant-rate-limit:-server"
@@ -38,16 +33,26 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v5
+    permissions:
+      contents: read
 
-      - uses: haskell/actions/setup@v2
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v5
+
+      - name: "Install Stack"
+        uses: haskell-actions/setup@v2
         id: install-haskell
         with:
           stack-no-global: true
           enable-stack: true
           stack-setup-ghc: true
           stack-version: "latest"
+
+      - name: "Initialise stack.yaml for latest resolver"
+        if: matrix.resolver == 'stack'
+        shell: bash
+        run: stack init --resolver=lts-24
 
       - name: Write flags to file (for hashing)
         run: |

@@ -1,49 +1,55 @@
-name: hackage
+name: "Release"
 
 on:
   push:
-    tags:
-      - 'wai-rate-limit-*'
-      - 'wai-rate-limit-redis-*'
-      - 'servant-rate-limit-*'
+    paths:
+      - .github/workflows/hackage.yml
+  release:
+    types:
+      - created
+      - published
+
+concurrency:
+  group: hackage
+  cancel-in-progress: false
 
 jobs:
   publish-to-hackage:
-    name: 'Publish to Hackage'
+    name: "Publish to Hackage"
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v5
+    permissions:
+      contents: read
 
-      - uses: haskell/actions/setup@v2
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v5
+
+      - name: "Install Stack"
+        uses: haskell-actions/setup@v2
         id: install-haskell
         with:
           stack-no-global: true
           enable-stack: true
-          stack-version: 'latest'
-
-      - name: Configure stack
-        run: |
-          mkdir -p ${{ steps.install-haskell.outputs.stack-root }}
-          echo "save-hackage-creds: false" >> ${{ steps.install-haskell.outputs.stack-root }}/config.yaml
+          stack-version: "latest"
 
       - name: Publish `wai-rate-limit`
-        if: startsWith(github.ref, 'refs/tags/wai-rate-limit-') && !contains(github.ref, 'redis')
-        run: stack upload ./wai-rate-limit/
+        if: github.event_name != 'push' && startsWith(github.ref, 'refs/tags/wai-rate-limit-') && !contains(github.ref, 'redis')
+        run: stack upload ./wai-rate-limit/ --candidate --no-save-hackage-creds
         env:
           HACKAGE_USERNAME: ${{ secrets.HACKAGE_USER }}
           HACKAGE_PASSWORD: ${{ secrets.HACKAGE_PASSWORD }}
 
       - name: Publish `wai-rate-limit-redis`
-        if: startsWith(github.ref, 'refs/tags/wai-rate-limit-redis-')
-        run: stack upload ./wai-rate-limit-redis/
+        if: github.event_name != 'push' && startsWith(github.ref, 'refs/tags/wai-rate-limit-redis-')
+        run: stack upload ./wai-rate-limit-redis/ --candidate --no-save-hackage-creds
         env:
           HACKAGE_USERNAME: ${{ secrets.HACKAGE_USER }}
           HACKAGE_PASSWORD: ${{ secrets.HACKAGE_PASSWORD }}
 
       - name: Publish `servant-rate-limit`
-        if: startsWith(github.ref, 'refs/tags/servant-rate-limit-')
-        run: stack upload ./servant-rate-limit/
+        if: github.event_name != 'push' && startsWith(github.ref, 'refs/tags/servant-rate-limit-')
+        run: stack upload ./servant-rate-limit/ --candidate --no-save-hackage-creds
         env:
           HACKAGE_USERNAME: ${{ secrets.HACKAGE_USER }}
           HACKAGE_PASSWORD: ${{ secrets.HACKAGE_PASSWORD }}
