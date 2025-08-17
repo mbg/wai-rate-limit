@@ -3,13 +3,13 @@ name: hackage
 on:
   push:
     tags:
-      - 'wai-rate-limit-*'
-      - 'wai-rate-limit-redis-*'
-      - 'servant-rate-limit-*'
+      - "wai-rate-limit-*"
+      - "wai-rate-limit-redis-*"
+      - "servant-rate-limit-*"
 
 jobs:
   publish-to-hackage:
-    name: 'Publish to Hackage'
+    name: "Publish to Hackage"
     runs-on: ubuntu-latest
 
     steps:
