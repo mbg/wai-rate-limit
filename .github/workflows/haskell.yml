@@ -10,6 +10,10 @@ on:
       - "LICENSE"
   pull_request:
 
+concurrency:
+  group: haskell-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: "Build & Test"

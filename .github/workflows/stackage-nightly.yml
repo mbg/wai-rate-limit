@@ -11,6 +11,10 @@ on:
       - ".github/workflows/stackage-nightly.yml"
   pull_request:
 
+concurrency:
+  group: nightly-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: "Build"
