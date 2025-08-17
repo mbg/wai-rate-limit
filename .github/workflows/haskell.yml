@@ -4,20 +4,10 @@ on:
   push:
     branches:
       - main
-    tags:
-      - "*"
-    paths:
-      - ".github/workflows/**"
-      - "servant-rate-limit/src/**"
-      - "servant-rate-limit/test/**"
-      - "servant-rate-limit/package.yaml"
-      - "wai-rate-limit/src/**"
-      - "wai-rate-limit/package.yaml"
-      - "wai-rate-limit-redis/src/**"
-      - "wai-rate-limit-redis/test/**"
-      - "wai-rate-limit-redis/package.yaml"
-      - "docker-compose.yaml"
-      - "stack*.yaml"
+    paths-ignore:
+      - ".github/dependabot.yml"
+      - "*.md"
+      - "LICENSE"
   pull_request:
 
 jobs:
