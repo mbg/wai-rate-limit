@@ -1,8 +1,8 @@
 # Rate limiting for Servant and as WAI middleware
 
 ![MIT](https://img.shields.io/github/license/mbg/wai-rate-limit)
-![CI](https://github.com/mbg/wai-rate-limit/workflows/CI/badge.svg?branch=main)
-![stackage-nightly](https://github.com/mbg/wai-rate-limit/workflows/stackage-nightly/badge.svg)
+[![Build & Test](https://github.com/mbg/wai-rate-limit/actions/workflows/haskell.yml/badge.svg)](https://github.com/mbg/wai-rate-limit/actions/workflows/haskell.yml)
+[![Nightly](https://github.com/mbg/wai-rate-limit/actions/workflows/stackage-nightly.yml/badge.svg)](https://github.com/mbg/wai-rate-limit/actions/workflows/stackage-nightly.yml)
 
 | Package | Version |
 |---------|---------|
