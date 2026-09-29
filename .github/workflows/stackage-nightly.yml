@@ -33,7 +33,7 @@ jobs:
         run: docker compose up -d
 
       - name: Build with the nightly snapshot
-        uses: mbg/actions/stack/nightly@v0.3
+        uses: mbg/actions/stack/nightly@v0.4
 
       - name: Stop containers
         shell: bash
